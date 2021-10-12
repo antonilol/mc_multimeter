@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+
+  "id": "mc_multimeter",
+
+  "version": "${version}",
+
+  "name": "Minecraft Multimeter",
+
+  "description": "Redstone analyzer and debugger",
+
+  "authors": [ "antonilol" ],
+
+  "contact": {
+    "homepage": "https://github.com/antonilol/mc_multimeter",
+    "sources":  "https://github.com/antonilol/mc_multimeter",
+    "issues":   "https://github.com/antonilol/mc_multimeter/issues"
+  },
+
+  "license": "MIT",
+
+  "icon": "assets/mc_multimeter/icon.png",
+
+  "environment": "client",
+
+  "entrypoints": {
+    "client": [ "com.antonilol.mc_multimeter.mc.Main" ]
+  },
+
+  "mixins": [ ],
+
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "fabric": "*",
+    "minecraft": "1.17.x",
+    "java": ">=16"
+  },
+
+  "suggests": { },
+
+  "custom": {
+    "modmenu": {
+      "links": { }
+    }
+  }
+}

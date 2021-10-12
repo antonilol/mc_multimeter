@@ -1,0 +1,15 @@
+#!/bin/bash
+
+rm {~/.minecraft/mods,build/libs}/mc_multimeter*
+
+v=$(cat gradle.properties | grep mod_version | sed 's/.*-//')
+
+echo "0.0.1-$((v+1))" | ./updateVersion
+
+./gradlew build
+
+rm build/libs/*dev.jar
+
+cp build/libs/mc_multimeter* ~/.minecraft/mods
+
+echo -e "\nBuilt version 0.0.1-$((v+1))"

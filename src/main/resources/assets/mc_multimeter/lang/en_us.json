@@ -1,0 +1,25 @@
+{
+	"commands.mc_multimeter.debug.send.succes":      "Debug message sent",
+	"commands.mc_multimeter.debug.send.fail":        "Failed to send message",
+
+	"commands.mc_multimeter.probe.notfound":         "Probe not found",
+
+	"commands.mc_multimeter.probe.list.none":        "No probes to list",
+	"commands.mc_multimeter.probe.list.title":       "Probes:",
+	"commands.mc_multimeter.probe.list.entry.true":  "   %s at %s %s %s",
+	"commands.mc_multimeter.probe.list.entry.false": "   %s at %s %s %s (disabled)",
+
+	"commands.mc_multimeter.probe.add":              "Added new probe %s at %s %s %s",
+
+	"commands.mc_multimeter.probe.remove":           "Removed probe %s at %s %s %s",
+	"commands.mc_multimeter.probe.removeall":        "Removed all probes",
+
+	"commands.mc_multimeter.probe.rename.true":      "Renamed probe %s to %s",
+	"commands.mc_multimeter.probe.rename.false":     "Can't rename probe %s to %s. The new name is already in use or too long",
+
+	"commands.mc_multimeter.probe.enable":           "Enabled probe %s at %s %s %s",
+	"commands.mc_multimeter.probe.disable":          "Disabled probe %s at %s %s %s",
+
+	"commands.mc_multimeter.version.line1":          "mc_multimeter v%s by Antoni Spaanderman",
+	"commands.mc_multimeter.version.line2":          "GitHub: https://github.com/antonilol/mc_multimeter"
+}
