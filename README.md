@@ -1,3 +1,5 @@
+[![Build](https://github.com/antonilol/mc_multimeter/actions/workflows/build.yml/badge.svg)](https://github.com/antonilol/mc_multimeter/actions/workflows/build.yml)
+
 # Minecraft Multimeter Mod
 
 
