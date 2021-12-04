@@ -1,0 +1,9 @@
+#!/bin/bash
+
+ver=$(cat gradle.properties | grep mod_version | sed 's/.*= //')
+
+# remove older installed versions
+rm ~/.minecraft/mods/mc_multimeter*
+
+cp "build/libs/mc_multimeter-$ver.jar" ~/.minecraft/mods/
+
