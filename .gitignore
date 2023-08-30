@@ -1,11 +1,14 @@
 bin/
 build/
+run/
 
 .gradle/
 .settings/
 
 .classpath
 .project
+
+*.launch
 
 compileBeta
 
