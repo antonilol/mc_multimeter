@@ -6,11 +6,11 @@ package com.antonilol.mc_multimeter.mc.command;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.argument.CoordinateArgument;
+import net.minecraft.command.argument.Vec3ArgumentType;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.command.argument.Vec3ArgumentType;
 
 public class ClientDefaultPosArgument implements ClientPosArgument {
 	private final CoordinateArgument x;
@@ -23,30 +23,36 @@ public class ClientDefaultPosArgument implements ClientPosArgument {
 		this.z = z;
 	}
 
+	@Override
 	public Vec3d toAbsolutePos(FabricClientCommandSource source) {
 		Vec3d vec3d = source.getPosition();
-		return new Vec3d(this.x.toAbsoluteCoordinate(vec3d.x), this.y.toAbsoluteCoordinate(vec3d.y),
-			this.z.toAbsoluteCoordinate(vec3d.z));
+		return new Vec3d(x.toAbsoluteCoordinate(vec3d.x), y.toAbsoluteCoordinate(vec3d.y),
+			z.toAbsoluteCoordinate(vec3d.z));
 	}
 
+	@Override
 	public Vec2f toAbsoluteRotation(FabricClientCommandSource source) {
 		Vec2f vec2f = source.getRotation();
-		return new Vec2f((float) this.x.toAbsoluteCoordinate((double) vec2f.x),
-			(float) this.y.toAbsoluteCoordinate((double) vec2f.y));
+		return new Vec2f((float) x.toAbsoluteCoordinate(vec2f.x),
+			(float) y.toAbsoluteCoordinate(vec2f.y));
 	}
 
+	@Override
 	public boolean isXRelative() {
-		return this.x.isRelative();
+		return x.isRelative();
 	}
 
+	@Override
 	public boolean isYRelative() {
-		return this.y.isRelative();
+		return y.isRelative();
 	}
 
+	@Override
 	public boolean isZRelative() {
-		return this.z.isRelative();
+		return z.isRelative();
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
@@ -54,10 +60,10 @@ public class ClientDefaultPosArgument implements ClientPosArgument {
 			return false;
 		} else {
 			ClientDefaultPosArgument defaultPosArgument = (ClientDefaultPosArgument) o;
-			if (!this.x.equals(defaultPosArgument.x)) {
+			if (!x.equals(defaultPosArgument.x)) {
 				return false;
 			} else {
-				return !this.y.equals(defaultPosArgument.y) ? false : this.z.equals(defaultPosArgument.z);
+				return !y.equals(defaultPosArgument.y) ? false : z.equals(defaultPosArgument.z);
 			}
 		}
 	}
@@ -109,8 +115,8 @@ public class ClientDefaultPosArgument implements ClientPosArgument {
 	}
 
 	public static ClientDefaultPosArgument absolute(Vec2f vec) {
-		return new ClientDefaultPosArgument(new CoordinateArgument(false, (double) vec.x),
-			new CoordinateArgument(false, (double) vec.y), new CoordinateArgument(true, 0.0D));
+		return new ClientDefaultPosArgument(new CoordinateArgument(false, vec.x),
+			new CoordinateArgument(false, vec.y), new CoordinateArgument(true, 0.0D));
 	}
 
 	public static ClientDefaultPosArgument zero() {
@@ -118,10 +124,10 @@ public class ClientDefaultPosArgument implements ClientPosArgument {
 			new CoordinateArgument(true, 0.0D));
 	}
 
+	@Override
 	public int hashCode() {
-		int i = this.x.hashCode();
-		i = 31 * i + this.y.hashCode();
-		i = 31 * i + this.z.hashCode();
-		return i;
+		int i = x.hashCode();
+		i = 31 * i + y.hashCode();
+		return 31 * i + z.hashCode();
 	}
 }

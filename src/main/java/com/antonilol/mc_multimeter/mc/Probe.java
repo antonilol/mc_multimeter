@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2021 Antoni Spaanderman
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,10 +33,10 @@ import net.minecraft.block.ComparatorBlock;
 import net.minecraft.block.entity.ComparatorBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.registry.Registries;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.registry.Registry;
 
 public class Probe {
 
@@ -248,7 +248,7 @@ public class Probe {
 
 		if (w != null) {
 			BlockState bs = w.getBlockState(getBlockPos());
-			String block = Registry.BLOCK.getId(bs.getBlock()).toString();
+			String block = Registries.BLOCK.getId(bs.getBlock()).toString();
 			String blockName = block + " at " + x + " " + y + " " + z;
 			if (bs.getBlock() instanceof ComparatorBlock) {
 				int power = ((ComparatorBlockEntity) w.getBlockEntity(getBlockPos())).getOutputSignal();

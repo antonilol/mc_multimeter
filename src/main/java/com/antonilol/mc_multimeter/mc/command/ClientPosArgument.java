@@ -3,7 +3,7 @@
 
 package com.antonilol.mc_multimeter.mc.command;
 
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
@@ -14,7 +14,7 @@ public interface ClientPosArgument {
 	Vec2f toAbsoluteRotation(FabricClientCommandSource source);
 
 	default BlockPos toAbsoluteBlockPos(FabricClientCommandSource fabricClientCommandSource) {
-		return new BlockPos(this.toAbsolutePos(fabricClientCommandSource));
+		return BlockPos.ofFloored(toAbsolutePos(fabricClientCommandSource));
 	}
 
 	boolean isXRelative();

@@ -3,17 +3,17 @@
 
 package com.antonilol.mc_multimeter.mc.command;
 
+import java.util.Objects;
+
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import java.util.Objects;
-
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.command.argument.CoordinateArgument;
+import net.minecraft.command.argument.Vec3ArgumentType;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.command.argument.CoordinateArgument;
-import net.minecraft.command.argument.Vec3ArgumentType;
 
 public class ClientLookingPosArgument implements ClientPosArgument {
 	public static final char CARET = '^';
@@ -27,6 +27,7 @@ public class ClientLookingPosArgument implements ClientPosArgument {
 		this.z = z;
 	}
 
+	@Override
 	public Vec3d toAbsolutePos(FabricClientCommandSource source) {
 		Vec2f vec2f = source.getRotation();
 		// old: Vec3d vec3d = source.getEntityAnchor().positionAt(source);
@@ -38,27 +39,31 @@ public class ClientLookingPosArgument implements ClientPosArgument {
 		float i = MathHelper.sin(-vec2f.x * 0.017453292F);
 		float j = MathHelper.cos((-vec2f.x + 90.0F) * 0.017453292F);
 		float k = MathHelper.sin((-vec2f.x + 90.0F) * 0.017453292F);
-		Vec3d vec3d2 = new Vec3d((double) (f * h), (double) i, (double) (g * h));
-		Vec3d vec3d3 = new Vec3d((double) (f * j), (double) k, (double) (g * j));
+		Vec3d vec3d2 = new Vec3d(f * h, i, g * h);
+		Vec3d vec3d3 = new Vec3d(f * j, k, g * j);
 		Vec3d vec3d4 = vec3d2.crossProduct(vec3d3).multiply(-1.0D);
-		double d = vec3d2.x * this.z + vec3d3.x * this.y + vec3d4.x * this.x;
-		double e = vec3d2.y * this.z + vec3d3.y * this.y + vec3d4.y * this.x;
-		double l = vec3d2.z * this.z + vec3d3.z * this.y + vec3d4.z * this.x;
+		double d = vec3d2.x * z + vec3d3.x * y + vec3d4.x * x;
+		double e = vec3d2.y * z + vec3d3.y * y + vec3d4.y * x;
+		double l = vec3d2.z * z + vec3d3.z * y + vec3d4.z * x;
 		return new Vec3d(vec3d.x + d, vec3d.y + e, vec3d.z + l);
 	}
 
+	@Override
 	public Vec2f toAbsoluteRotation(FabricClientCommandSource source) {
 		return Vec2f.ZERO;
 	}
 
+	@Override
 	public boolean isXRelative() {
 		return true;
 	}
 
+	@Override
 	public boolean isYRelative() {
 		return true;
 	}
 
+	@Override
 	public boolean isZRelative() {
 		return true;
 	}
@@ -95,6 +100,7 @@ public class ClientLookingPosArgument implements ClientPosArgument {
 		}
 	}
 
+	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
@@ -102,11 +108,12 @@ public class ClientLookingPosArgument implements ClientPosArgument {
 			return false;
 		} else {
 			ClientLookingPosArgument lookingPosArgument = (ClientLookingPosArgument) o;
-			return this.x == lookingPosArgument.x && this.y == lookingPosArgument.y && this.z == lookingPosArgument.z;
+			return x == lookingPosArgument.x && y == lookingPosArgument.y && z == lookingPosArgument.z;
 		}
 	}
 
+	@Override
 	public int hashCode() {
-		return Objects.hash(new Object[] { this.x, this.y, this.z });
+		return Objects.hash(x, y, z);
 	}
 }

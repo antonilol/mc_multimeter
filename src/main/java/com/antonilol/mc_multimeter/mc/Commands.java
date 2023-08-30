@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2021 Antoni Spaanderman
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,8 +22,8 @@
 
 package com.antonilol.mc_multimeter.mc;
 
-import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 import com.antonilol.mc_multimeter.Utils;
 import com.antonilol.mc_multimeter.mc.command.ClientBlockPosArgumentType;
@@ -32,9 +32,9 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
-import net.minecraft.text.TranslatableText;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class Commands {
@@ -50,11 +50,11 @@ public class Commands {
 									String msg = StringArgumentType.getString(c, "message");
 									Utils.jFrameStdin.println(msg);
 									c.getSource()
-										.sendFeedback(new TranslatableText("commands.mc_multimeter.debug.send.succes"));
+										.sendFeedback(Text.translatable("commands.mc_multimeter.debug.send.succes"));
 									return Command.SINGLE_SUCCESS;
 								}
 								c.getSource()
-									.sendFeedback(new TranslatableText("commands.mc_multimeter.debug.send.fail"));
+									.sendFeedback(Text.translatable("commands.mc_multimeter.debug.send.fail"));
 								return Command.SINGLE_SUCCESS;
 							}))));
 		}
@@ -64,12 +64,12 @@ public class Commands {
 			if (p == Probe.ALL) {
 				Probe.getProbes().clear();
 				Utils.jFrameStdin.println(Utils.REMOVEALL);
-				c.getSource().sendFeedback(new TranslatableText("commands.mc_multimeter.probe.removeall"));
+				c.getSource().sendFeedback(Text.translatable("commands.mc_multimeter.probe.removeall"));
 			} else {
 				Probe.getProbes().remove(p);
 				Utils.jFrameStdin.println(Utils.REMOVE + " " + p.getName());
 
-				c.getSource().sendFeedback(new TranslatableText(
+				c.getSource().sendFeedback(Text.translatable(
 					"commands.mc_multimeter.probe.remove",
 					p.getName(),
 					p.getX(),
@@ -89,7 +89,7 @@ public class Commands {
 							if (Probe.getProbes().size() == 1 && !Utils.running()) {
 								Main.startJFrame();
 							}
-							c.getSource().sendFeedback(new TranslatableText(
+							c.getSource().sendFeedback(Text.translatable(
 								"commands.mc_multimeter.probe.add",
 								p.getName(),
 								p.getX(),
@@ -117,14 +117,14 @@ public class Commands {
 						.executes(c -> {
 							if (Probe.getProbes().size() == 0) {
 								c.getSource()
-									.sendFeedback(new TranslatableText("commands.mc_multimeter.probe.list.none"));
+									.sendFeedback(Text.translatable("commands.mc_multimeter.probe.list.none"));
 							} else {
 								c.getSource()
-									.sendFeedback(new TranslatableText("commands.mc_multimeter.probe.list.title"));
+									.sendFeedback(Text.translatable("commands.mc_multimeter.probe.list.title"));
 
 								for (Probe p : Probe.getProbes()) {
 									c.getSource().sendFeedback(
-										new TranslatableText(
+										Text.translatable(
 											"commands.mc_multimeter.probe.list.entry." + p.isEnabled(),
 											p.getName(),
 											p.getX(),
@@ -147,7 +147,7 @@ public class Commands {
 										String o = p.getName();
 										String n = StringArgumentType.getString(c, "newname");
 
-										c.getSource().sendFeedback(new TranslatableText(
+										c.getSource().sendFeedback(Text.translatable(
 											"commands.mc_multimeter.probe.rename." + p.rename(n), o, n));
 										return Command.SINGLE_SUCCESS;
 									}))))
@@ -158,7 +158,7 @@ public class Commands {
 							.executes(c -> {
 								Probe p = ProbeArgumentType.getProbe(c, "name");
 								p.enable();
-								c.getSource().sendFeedback(new TranslatableText(
+								c.getSource().sendFeedback(Text.translatable(
 									"commands.mc_multimeter.probe.enable",
 									p.getName(),
 									p.getX(),
@@ -173,7 +173,7 @@ public class Commands {
 							.executes(c -> {
 								Probe p = ProbeArgumentType.getProbe(c, "name");
 								p.disable();
-								c.getSource().sendFeedback(new TranslatableText(
+								c.getSource().sendFeedback(Text.translatable(
 									"commands.mc_multimeter.probe.disable",
 									p.getName(),
 									p.getX(),
@@ -201,19 +201,15 @@ public class Commands {
 			literal("version")
 				.executes(c -> {
 					c.getSource()
-						.sendFeedback(new TranslatableText("commands.mc_multimeter.version.line1", Main.VERSION));
-					c.getSource().sendFeedback(new TranslatableText("commands.mc_multimeter.version.line2")); // TODO is
-																												// it
-																												// possible
-																												// to
-																												// add a
-																												// clickable
-																												// link
-																												// here?
+						.sendFeedback(Text.translatable("commands.mc_multimeter.version.line1", Main.VERSION));
+					// TODO is it possible to add a clickable link here?
+					c.getSource().sendFeedback(Text.translatable("commands.mc_multimeter.version.line2"));
 					return Command.SINGLE_SUCCESS;
 				}));
 
-		ClientCommandManager.DISPATCHER.register(mainNode);
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+			dispatcher.register(mainNode);
+		});
 	}
 
 	private static LiteralArgumentBuilder<FabricClientCommandSource> mainNode = literal("multimeter");
@@ -221,7 +217,9 @@ public class Commands {
 	private static void register(boolean separate, LiteralArgumentBuilder<FabricClientCommandSource> node) {
 		mainNode = mainNode.then(node);
 		if (separate) {
-			ClientCommandManager.DISPATCHER.register(node);
+			ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+				dispatcher.register(node);
+			});
 		}
 	}
 }
