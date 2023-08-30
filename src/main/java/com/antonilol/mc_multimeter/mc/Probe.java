@@ -39,58 +39,58 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.Registry;
 
 public class Probe {
-		
+
 	public static final String NAME_PREFIX = "probe";
 
 	public static final int NAME_MAX_LENGTH = 20;
-	
+
 	private static ArrayList<Probe> probes = new ArrayList<Probe>();
-	
-	public static final HashMap<String,String> PROPS = new HashMap<String,String>();
-	
-	public static final HashMap<String, Class<? extends Object>> TYPES = new HashMap<String,Class<? extends Object>>();
-	
+
+	public static final HashMap<String, String> PROPS = new HashMap<String, String>();
+
+	public static final HashMap<String, Class<? extends Object>> TYPES = new HashMap<String, Class<? extends Object>>();
+
 	public static final Probe ALL = new Probe();
-	
+
 	static {
-        
-        PROPS.put("minecraft:redstone_wire", "power");
-        PROPS.put("minecraft:redstone_torch", "lit");
-        PROPS.put("minecraft:redstone_wall_torch", "lit");
-        PROPS.put("minecraft:repeater", "powered");
-        // comparator has nbt OutputSignal
-        PROPS.put("minecraft:piston", "extended");
-        PROPS.put("minecraft:sticky_piston", "extended");
-        PROPS.put("minecraft:observer", "powered");
-        PROPS.put("minecraft:hopper", "enabled");
-        PROPS.put("minecraft:dispenser", "triggered");
-        PROPS.put("minecraft:dropper", "triggered");
-        PROPS.put("minecraft:lectern", "has_book"); // TODO how do i get output signal strength?
-        PROPS.put("minecraft:target", "power");
-        PROPS.put("minecraft:lever", "powered");
-        PROPS.put("minecraft:lightning_rod", "powered");
-        PROPS.put("minecraft:daylight_detector", "power");
-        PROPS.put("minecraft:tripwire_hook", "powered");
-        // trapped chest and tnt have no props or nbt to determine power in/output
-        PROPS.put("minecraft:redstone_lamp", "lit");
-        PROPS.put("minecraft:note_block", "powered");
-        PROPS.put("minecraft:button", "powered"); // TODO buttons
-        PROPS.put("minecraft:pressure_plate", "powered"); // TODO
-        PROPS.put("minecraft:light_weighted_pressure_plate", "power");
-        PROPS.put("minecraft:heavy_weighted_pressure_plate", "power");
-        PROPS.put("minecraft:door", "powered"); // TODO
-        PROPS.put("minecraft:trapdoor", "powered"); // TODO
-        PROPS.put("minecraft:fence_gate", "powered"); // TODO
-        
-        TYPES.put("power", Integer.class);
-        TYPES.put("lit", Boolean.class);
-        TYPES.put("extended", Boolean.class);
-        TYPES.put("powered", Boolean.class);
-        TYPES.put("enabled", Boolean.class);
-        TYPES.put("triggered", Boolean.class);
-        TYPES.put("has_book", Boolean.class);
-    }
-	
+
+		PROPS.put("minecraft:redstone_wire", "power");
+		PROPS.put("minecraft:redstone_torch", "lit");
+		PROPS.put("minecraft:redstone_wall_torch", "lit");
+		PROPS.put("minecraft:repeater", "powered");
+		// comparator has nbt OutputSignal
+		PROPS.put("minecraft:piston", "extended");
+		PROPS.put("minecraft:sticky_piston", "extended");
+		PROPS.put("minecraft:observer", "powered");
+		PROPS.put("minecraft:hopper", "enabled");
+		PROPS.put("minecraft:dispenser", "triggered");
+		PROPS.put("minecraft:dropper", "triggered");
+		PROPS.put("minecraft:lectern", "has_book"); // TODO how do i get output signal strength?
+		PROPS.put("minecraft:target", "power");
+		PROPS.put("minecraft:lever", "powered");
+		PROPS.put("minecraft:lightning_rod", "powered");
+		PROPS.put("minecraft:daylight_detector", "power");
+		PROPS.put("minecraft:tripwire_hook", "powered");
+		// trapped chest and tnt have no props or nbt to determine power in/output
+		PROPS.put("minecraft:redstone_lamp", "lit");
+		PROPS.put("minecraft:note_block", "powered");
+		PROPS.put("minecraft:button", "powered"); // TODO buttons
+		PROPS.put("minecraft:pressure_plate", "powered"); // TODO
+		PROPS.put("minecraft:light_weighted_pressure_plate", "power");
+		PROPS.put("minecraft:heavy_weighted_pressure_plate", "power");
+		PROPS.put("minecraft:door", "powered"); // TODO
+		PROPS.put("minecraft:trapdoor", "powered"); // TODO
+		PROPS.put("minecraft:fence_gate", "powered"); // TODO
+
+		TYPES.put("power", Integer.class);
+		TYPES.put("lit", Boolean.class);
+		TYPES.put("extended", Boolean.class);
+		TYPES.put("powered", Boolean.class);
+		TYPES.put("enabled", Boolean.class);
+		TYPES.put("triggered", Boolean.class);
+		TYPES.put("has_book", Boolean.class);
+	}
+
 	public static String findFreeName() {
 		int n = 0;
 		while (true) {
@@ -110,14 +110,14 @@ public class Probe {
 			}
 		}
 	}
-	
+
 	private boolean enabled;
 	private String name;
 	private String worldName;
 	private int x;
 	private int y;
 	private int z;
-	
+
 	public Probe(String name, Vec3i pos) {
 		this.name = name;
 		enabled = true;
@@ -126,32 +126,32 @@ public class Probe {
 		z = pos.getZ();
 		worldName = Utils.getWorldName();
 	}
-	
+
 	public Probe(Vec3i pos) {
 		this(findFreeName(), pos);
 	}
-	
+
 	public static Probe deserialize(String line) throws Exception {
 		if (line == null) {
 			throw new Exception();
 		}
-		
+
 		String[] s = line.split(" ");
-		
+
 		if (s.length < 6) {
 			throw new Exception();
 		}
-		
+
 		String name = s[0];
 		int x = Integer.parseInt(s[1]);
 		int y = Integer.parseInt(s[2]);
 		int z = Integer.parseInt(s[3]);
 		String worldName = s[4];
 		boolean enabled = s[5].equals("1");
-		
+
 		return new Probe(name, x, y, z, worldName, enabled);
 	}
-	
+
 	private Probe(String name, int x, int y, int z, String worldName, boolean enabled) {
 		this.name = name;
 		this.x = x;
@@ -160,7 +160,7 @@ public class Probe {
 		this.worldName = worldName;
 		this.enabled = enabled;
 	}
-	
+
 	private Probe() {
 	}
 
@@ -175,7 +175,7 @@ public class Probe {
 	public String getName() {
 		return name;
 	}
-	
+
 	public BlockPos getBlockPos() {
 		return new BlockPos(x, y, z);
 	}
@@ -187,7 +187,7 @@ public class Probe {
 	public int getY() {
 		return y;
 	}
-	
+
 	public int getZ() {
 		return z;
 	}
@@ -195,7 +195,7 @@ public class Probe {
 	public boolean isEnabled() {
 		return enabled;
 	}
-	
+
 	public boolean rename(String name) {
 		if (name == null) {
 			return false;
@@ -211,26 +211,26 @@ public class Probe {
 		}
 		return false;
 	}
-	
-    public void setEnabled(boolean enabled) {
+
+	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
-	
-    public void enable() {
+
+	public void enable() {
 		enabled = true;
 	}
-	
-    public void disable() {
+
+	public void disable() {
 		enabled = false;
 	}
- 
-    public void setPos(Vec3i pos) {
+
+	public void setPos(Vec3i pos) {
 		x = pos.getX();
 		y = pos.getY();
 		z = pos.getZ();
 	}
 
-    public void setX(int x) {
+	public void setX(int x) {
 		this.x = x;
 	}
 
@@ -241,11 +241,11 @@ public class Probe {
 	public void setZ(int z) {
 		this.z = z;
 	}
-	
+
 	private BlockPower getBlockPower() {
 		MinecraftClient c = MinecraftClient.getInstance();
 		ClientWorld w = c.world;
-		
+
 		if (w != null) {
 			BlockState bs = w.getBlockState(getBlockPos());
 			String block = Registry.BLOCK.getId(bs.getBlock()).toString();
@@ -254,12 +254,13 @@ public class Probe {
 				int power = ((ComparatorBlockEntity) w.getBlockEntity(getBlockPos())).getOutputSignal();
 				return new BlockPower(power, blockName, name);
 			}
-			
+
 			for (Property<?> p : bs.getProperties()) {
 				for (Entry<String, Class<? extends Object>> v : TYPES.entrySet()) {
 					if (p.getName().equals(v.getKey())) {
 						if (!p.getType().equals(v.getValue())) {
-							throw new RuntimeException("Type mismatch: expected " + v.getValue().getName() + " but got " + p.getType().getName() + ". prop=" + p.getName() + " block=" + block);
+							throw new RuntimeException("Type mismatch: expected " + v.getValue().getName() + " but got "
+								+ p.getType().getName() + ". prop=" + p.getName() + " block=" + block);
 						}
 						if (v.getValue().equals(Boolean.class)) {
 							return new BlockPower((Boolean) bs.get(p), blockName, name);
@@ -267,7 +268,8 @@ public class Probe {
 						if (v.getValue().equals(Integer.class)) {
 							return new BlockPower((Integer) bs.get(p), blockName, name);
 						}
-						throw new RuntimeException("Unknown type " + p.getType().getName() + ". prop=" + p.getName() + " block=" + block);
+						throw new RuntimeException(
+							"Unknown type " + p.getType().getName() + ". prop=" + p.getName() + " block=" + block);
 					}
 				}
 			}
@@ -275,7 +277,7 @@ public class Probe {
 		}
 		return null;
 	}
-	
+
 	public static BlockPower[] collectData() {
 		ArrayList<BlockPower> l = new ArrayList<BlockPower>();
 		String w = Utils.getWorldName();
@@ -289,7 +291,7 @@ public class Probe {
 		}
 		return l.toArray(new BlockPower[0]);
 	}
-	
+
 	public String getWorldName() {
 		return worldName;
 	}
@@ -298,13 +300,13 @@ public class Probe {
 		public final int power;
 		public final String blockName;
 		public final String probeName;
-		
+
 		public BlockPower(int power, String blockName, String probeName) {
 			this.power = power;
 			this.blockName = blockName;
 			this.probeName = probeName;
 		}
-		
+
 		public BlockPower(boolean power, String blockName, String probeName) {
 			this(power ? 15 : 0, blockName, probeName);
 		}

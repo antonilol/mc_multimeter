@@ -40,44 +40,45 @@ import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.text.TranslatableText;
 
 public class ProbeArgumentType implements ArgumentType<Probe>, SuggestionProvider<FabricClientCommandSource> {
-	
+
 	private static final Collection<String> EXAMPLES = new ArrayList<String>();
-	
+
 	static {
-        EXAMPLES.add("probe0");
-        EXAMPLES.add("yourcustomname");
-        EXAMPLES.add("abcABC123_-.+");
+		EXAMPLES.add("probe0");
+		EXAMPLES.add("yourcustomname");
+		EXAMPLES.add("abcABC123_-.+");
 	}
 
 	public static Probe getProbe(final CommandContext<FabricClientCommandSource> context, final String name) {
-        return context.getArgument(name, Probe.class);
-    }
+		return context.getArgument(name, Probe.class);
+	}
 
 	private final boolean allowAll, enabled, filter;
-	
+
 	public ProbeArgumentType() {
 		filter = false;
 		enabled = false;
 		allowAll = false;
 	}
-	
+
 	public ProbeArgumentType(boolean filter, boolean enabled, boolean allowAll) {
 		this.filter = filter;
 		this.enabled = enabled;
 		this.allowAll = allowAll;
 	}
-	
+
 	@Override
-    public Collection<String> getExamples() {
-        return EXAMPLES;
-    }
-	
+	public Collection<String> getExamples() {
+		return EXAMPLES;
+	}
+
 	@Override
-	public CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> context, SuggestionsBuilder builder) throws CommandSyntaxException {
+	public CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> context,
+		SuggestionsBuilder builder) throws CommandSyntaxException {
 		if (allowAll) {
 			builder.suggest("*");
 		}
-		
+
 		for (Probe p : Probe.getProbes()) {
 			if (!filter || enabled == p.isEnabled()) {
 				builder.suggest(p.getName());
@@ -90,20 +91,21 @@ public class ProbeArgumentType implements ArgumentType<Probe>, SuggestionProvide
 	@Override
 	public Probe parse(StringReader reader) throws CommandSyntaxException {
 		final int start = reader.getCursor();
-        while (reader.canRead() && (StringReader.isAllowedInUnquotedString(reader.peek()) || reader.peek() == '*')) {
-            reader.skip();
-        }
-        String s = reader.getString().substring(start, reader.getCursor());
-        
-        if ("*".equals(s)) {
-        	return Probe.ALL;
-        }
-        
+		while (reader.canRead() && (StringReader.isAllowedInUnquotedString(reader.peek()) || reader.peek() == '*')) {
+			reader.skip();
+		}
+		String s = reader.getString().substring(start, reader.getCursor());
+
+		if ("*".equals(s)) {
+			return Probe.ALL;
+		}
+
 		for (Probe p : Probe.getProbes()) {
 			if (p.getName().equals(s)) {
 				return p;
 			}
 		}
-		throw new SimpleCommandExceptionType(new TranslatableText("commands.mc_multimeter.probe.notfound")).createWithContext(reader);
+		throw new SimpleCommandExceptionType(new TranslatableText("commands.mc_multimeter.probe.notfound"))
+			.createWithContext(reader);
 	}
 }

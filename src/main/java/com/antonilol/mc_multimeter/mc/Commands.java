@@ -39,27 +39,26 @@ import net.minecraft.util.Formatting;
 
 public class Commands {
 	public static void register() {
-		
+
 		if (Main.DEBUG) {
 			register(false,
 				literal("debug").then(
 					literal("send").then(
 						argument("message", StringArgumentType.greedyString())
-						.executes(c -> {
-							if (Utils.running()) {
-								String msg = StringArgumentType.getString(c, "message");
-								Utils.jFrameStdin.println(msg);
-								c.getSource().sendFeedback(new TranslatableText("commands.mc_multimeter.debug.send.succes"));
+							.executes(c -> {
+								if (Utils.running()) {
+									String msg = StringArgumentType.getString(c, "message");
+									Utils.jFrameStdin.println(msg);
+									c.getSource()
+										.sendFeedback(new TranslatableText("commands.mc_multimeter.debug.send.succes"));
+									return Command.SINGLE_SUCCESS;
+								}
+								c.getSource()
+									.sendFeedback(new TranslatableText("commands.mc_multimeter.debug.send.fail"));
 								return Command.SINGLE_SUCCESS;
-							}
-							c.getSource().sendFeedback(new TranslatableText("commands.mc_multimeter.debug.send.fail"));
-							return Command.SINGLE_SUCCESS;
-						})
-					)
-				)
-			);
+							}))));
 		}
-		
+
 		final Command<FabricClientCommandSource> remove = c -> {
 			Probe p = ProbeArgumentType.getProbe(c, "name");
 			if (p == Probe.ALL) {
@@ -69,163 +68,156 @@ public class Commands {
 			} else {
 				Probe.getProbes().remove(p);
 				Utils.jFrameStdin.println(Utils.REMOVE + " " + p.getName());
-				
+
 				c.getSource().sendFeedback(new TranslatableText(
 					"commands.mc_multimeter.probe.remove",
 					p.getName(),
 					p.getX(),
 					p.getY(),
-					p.getZ()
-				));
+					p.getZ()));
 			}
 			return Command.SINGLE_SUCCESS;
 		};
-		
+
 		register(true,
 			literal("probe").then(
 				literal("add").then(
 					argument("position", ClientBlockPosArgumentType.blockPos())
-					.executes(c -> {
-						Probe p = new Probe(ClientBlockPosArgumentType.getBlockPos(c, "position"));
-						Probe.getProbes().add(p);
-						if (Probe.getProbes().size() == 1 && !Utils.running()) {
-							Main.startJFrame();
-						}
-						c.getSource().sendFeedback(new TranslatableText(
-							"commands.mc_multimeter.probe.add",
-							p.getName(),
-							p.getX(),
-							p.getY(),
-							p.getZ()
-						));
-						return Command.SINGLE_SUCCESS;
-					})
-				)
-			).then(
-				literal("remove").then(
-					argument("name", new ProbeArgumentType())
-					.suggests(new ProbeArgumentType(false, false, true))
-					.executes(c -> {
-						int status = remove.run(c);
-						
-						if (Probe.getProbes().size() == 0 && Utils.running()) {
-							Main.stopJFrame();
-						}
-						
-						return status;
-					}).then(
-						literal("keepWindow")
-						.executes(remove)
-					)
-				)
-			).then(
-				literal("list")
-				.executes(c -> {
-					if (Probe.getProbes().size() == 0) {
-						c.getSource().sendFeedback(new TranslatableText("commands.mc_multimeter.probe.list.none"));
-					} else {
-						c.getSource().sendFeedback(new TranslatableText("commands.mc_multimeter.probe.list.title"));
-						
-						for (Probe p : Probe.getProbes()) {
-							c.getSource().sendFeedback(
-								new TranslatableText(
-									"commands.mc_multimeter.probe.list.entry." + p.isEnabled(),
+						.executes(c -> {
+							Probe p = new Probe(ClientBlockPosArgumentType.getBlockPos(c, "position"));
+							Probe.getProbes().add(p);
+							if (Probe.getProbes().size() == 1 && !Utils.running()) {
+								Main.startJFrame();
+							}
+							c.getSource().sendFeedback(new TranslatableText(
+								"commands.mc_multimeter.probe.add",
+								p.getName(),
+								p.getX(),
+								p.getY(),
+								p.getZ()));
+							return Command.SINGLE_SUCCESS;
+						})))
+				.then(
+					literal("remove").then(
+						argument("name", new ProbeArgumentType())
+							.suggests(new ProbeArgumentType(false, false, true))
+							.executes(c -> {
+								int status = remove.run(c);
+
+								if (Probe.getProbes().size() == 0 && Utils.running()) {
+									Main.stopJFrame();
+								}
+
+								return status;
+							}).then(
+								literal("keepWindow")
+									.executes(remove))))
+				.then(
+					literal("list")
+						.executes(c -> {
+							if (Probe.getProbes().size() == 0) {
+								c.getSource()
+									.sendFeedback(new TranslatableText("commands.mc_multimeter.probe.list.none"));
+							} else {
+								c.getSource()
+									.sendFeedback(new TranslatableText("commands.mc_multimeter.probe.list.title"));
+
+								for (Probe p : Probe.getProbes()) {
+									c.getSource().sendFeedback(
+										new TranslatableText(
+											"commands.mc_multimeter.probe.list.entry." + p.isEnabled(),
+											p.getName(),
+											p.getX(),
+											p.getY(),
+											p.getZ()).formatted(p.isEnabled() ? Formatting.GREEN : Formatting.RED));
+								}
+							}
+							return Command.SINGLE_SUCCESS;
+						})
+
+				).then(
+					literal("rename").then(
+						argument("oldname", new ProbeArgumentType())
+							.suggests(new ProbeArgumentType())
+							.then(
+								argument("newname", StringArgumentType.word()) // TODO command error on duplicate name
+																				// here
+									.executes(c -> {
+										Probe p = ProbeArgumentType.getProbe(c, "oldname");
+										String o = p.getName();
+										String n = StringArgumentType.getString(c, "newname");
+
+										c.getSource().sendFeedback(new TranslatableText(
+											"commands.mc_multimeter.probe.rename." + p.rename(n), o, n));
+										return Command.SINGLE_SUCCESS;
+									}))))
+				.then(
+					literal("enable").then(
+						argument("name", new ProbeArgumentType())
+							.suggests(new ProbeArgumentType(true, false, false)) // TODO all
+							.executes(c -> {
+								Probe p = ProbeArgumentType.getProbe(c, "name");
+								p.enable();
+								c.getSource().sendFeedback(new TranslatableText(
+									"commands.mc_multimeter.probe.enable",
 									p.getName(),
 									p.getX(),
 									p.getY(),
-									p.getZ()
-								).formatted(p.isEnabled() ? Formatting.GREEN : Formatting.RED)
-							);
-						}
-					}
-					return Command.SINGLE_SUCCESS;
-				})
-				
-			).then(
-				literal("rename").then(
-					argument("oldname", new ProbeArgumentType())
-					.suggests(new ProbeArgumentType())
-					.then(
-						argument("newname", StringArgumentType.word()) // TODO command error on duplicate name here
-						.executes(c -> {
-							Probe p = ProbeArgumentType.getProbe(c, "oldname");
-							String o = p.getName();
-							String n = StringArgumentType.getString(c, "newname");
-							
-							c.getSource().sendFeedback(new TranslatableText("commands.mc_multimeter.probe.rename." + p.rename(n), o, n));
-							return Command.SINGLE_SUCCESS;
-						})
-					)
-				)
-			).then(
-				literal("enable").then(
-					argument("name", new ProbeArgumentType())
-					.suggests(new ProbeArgumentType(true, false, false)) // TODO all
-					.executes(c -> {
-						Probe p = ProbeArgumentType.getProbe(c, "name");
-						p.enable();
-						c.getSource().sendFeedback(new TranslatableText(
-							"commands.mc_multimeter.probe.enable",
-							p.getName(),
-							p.getX(),
-							p.getY(),
-							p.getZ()
-						));
-						return Command.SINGLE_SUCCESS;
-					})
-				)
-			).then(
-				literal("disable").then(
-					argument("name", new ProbeArgumentType())
-					.suggests(new ProbeArgumentType(true, true, false)) // TODO all
-					.executes(c -> {
-						Probe p = ProbeArgumentType.getProbe(c, "name");
-						p.disable();
-						c.getSource().sendFeedback(new TranslatableText(
-							"commands.mc_multimeter.probe.disable",
-							p.getName(),
-							p.getX(),
-							p.getY(),
-							p.getZ()
-						));
-						return Command.SINGLE_SUCCESS;
-					})
-				)
-			)
-		);
-		
+									p.getZ()));
+								return Command.SINGLE_SUCCESS;
+							})))
+				.then(
+					literal("disable").then(
+						argument("name", new ProbeArgumentType())
+							.suggests(new ProbeArgumentType(true, true, false)) // TODO all
+							.executes(c -> {
+								Probe p = ProbeArgumentType.getProbe(c, "name");
+								p.disable();
+								c.getSource().sendFeedback(new TranslatableText(
+									"commands.mc_multimeter.probe.disable",
+									p.getName(),
+									p.getX(),
+									p.getY(),
+									p.getZ()));
+								return Command.SINGLE_SUCCESS;
+							}))));
+
 		register(false,
 			literal("graph").then(
 				literal("setType").then(
 					literal("line")
-					.executes(c -> {
-						Utils.jFrameStdin.println(Utils.LINE_GRAPH);
-						return Command.SINGLE_SUCCESS;
-					})
-				).then(
-					literal("bar")
-					.executes(c -> {
-						Utils.jFrameStdin.println(Utils.BAR_GRAPH);
-						return Command.SINGLE_SUCCESS;
-					})
-				)
-			)
-		);
+						.executes(c -> {
+							Utils.jFrameStdin.println(Utils.LINE_GRAPH);
+							return Command.SINGLE_SUCCESS;
+						}))
+					.then(
+						literal("bar")
+							.executes(c -> {
+								Utils.jFrameStdin.println(Utils.BAR_GRAPH);
+								return Command.SINGLE_SUCCESS;
+							}))));
 
 		register(false,
 			literal("version")
-			.executes(c -> {
-				c.getSource().sendFeedback(new TranslatableText("commands.mc_multimeter.version.line1", Main.VERSION));
-				c.getSource().sendFeedback(new TranslatableText("commands.mc_multimeter.version.line2")); // TODO is it possible to add a clickable link here?
-				return Command.SINGLE_SUCCESS;
-			})
-		);
-		
+				.executes(c -> {
+					c.getSource()
+						.sendFeedback(new TranslatableText("commands.mc_multimeter.version.line1", Main.VERSION));
+					c.getSource().sendFeedback(new TranslatableText("commands.mc_multimeter.version.line2")); // TODO is
+																												// it
+																												// possible
+																												// to
+																												// add a
+																												// clickable
+																												// link
+																												// here?
+					return Command.SINGLE_SUCCESS;
+				}));
+
 		ClientCommandManager.DISPATCHER.register(mainNode);
 	}
-	
+
 	private static LiteralArgumentBuilder<FabricClientCommandSource> mainNode = literal("multimeter");
-	
+
 	private static void register(boolean separate, LiteralArgumentBuilder<FabricClientCommandSource> node) {
 		mainNode = mainNode.then(node);
 		if (separate) {
@@ -233,4 +225,3 @@ public class Commands {
 		}
 	}
 }
-

@@ -25,12 +25,14 @@ public class ClientDefaultPosArgument implements ClientPosArgument {
 
 	public Vec3d toAbsolutePos(FabricClientCommandSource source) {
 		Vec3d vec3d = source.getPosition();
-		return new Vec3d(this.x.toAbsoluteCoordinate(vec3d.x), this.y.toAbsoluteCoordinate(vec3d.y), this.z.toAbsoluteCoordinate(vec3d.z));
+		return new Vec3d(this.x.toAbsoluteCoordinate(vec3d.x), this.y.toAbsoluteCoordinate(vec3d.y),
+			this.z.toAbsoluteCoordinate(vec3d.z));
 	}
 
 	public Vec2f toAbsoluteRotation(FabricClientCommandSource source) {
 		Vec2f vec2f = source.getRotation();
-		return new Vec2f((float)this.x.toAbsoluteCoordinate((double)vec2f.x), (float)this.y.toAbsoluteCoordinate((double)vec2f.y));
+		return new Vec2f((float) this.x.toAbsoluteCoordinate((double) vec2f.x),
+			(float) this.y.toAbsoluteCoordinate((double) vec2f.y));
 	}
 
 	public boolean isXRelative() {
@@ -51,7 +53,7 @@ public class ClientDefaultPosArgument implements ClientPosArgument {
 		} else if (!(o instanceof ClientDefaultPosArgument)) {
 			return false;
 		} else {
-			ClientDefaultPosArgument defaultPosArgument = (ClientDefaultPosArgument)o;
+			ClientDefaultPosArgument defaultPosArgument = (ClientDefaultPosArgument) o;
 			if (!this.x.equals(defaultPosArgument.x)) {
 				return false;
 			} else {
@@ -80,7 +82,8 @@ public class ClientDefaultPosArgument implements ClientPosArgument {
 		}
 	}
 
-	public static ClientDefaultPosArgument parse(StringReader reader, boolean centerIntegers) throws CommandSyntaxException {
+	public static ClientDefaultPosArgument parse(StringReader reader, boolean centerIntegers)
+		throws CommandSyntaxException {
 		int i = reader.getCursor();
 		CoordinateArgument coordinateArgument = CoordinateArgument.parse(reader, centerIntegers);
 		if (reader.canRead() && reader.peek() == ' ') {
@@ -101,15 +104,18 @@ public class ClientDefaultPosArgument implements ClientPosArgument {
 	}
 
 	public static ClientDefaultPosArgument absolute(double x, double y, double z) {
-		return new ClientDefaultPosArgument(new CoordinateArgument(false, x), new CoordinateArgument(false, y), new CoordinateArgument(false, z));
+		return new ClientDefaultPosArgument(new CoordinateArgument(false, x), new CoordinateArgument(false, y),
+			new CoordinateArgument(false, z));
 	}
 
 	public static ClientDefaultPosArgument absolute(Vec2f vec) {
-		return new ClientDefaultPosArgument(new CoordinateArgument(false, (double)vec.x), new CoordinateArgument(false, (double)vec.y), new CoordinateArgument(true, 0.0D));
+		return new ClientDefaultPosArgument(new CoordinateArgument(false, (double) vec.x),
+			new CoordinateArgument(false, (double) vec.y), new CoordinateArgument(true, 0.0D));
 	}
 
 	public static ClientDefaultPosArgument zero() {
-		return new ClientDefaultPosArgument(new CoordinateArgument(true, 0.0D), new CoordinateArgument(true, 0.0D), new CoordinateArgument(true, 0.0D));
+		return new ClientDefaultPosArgument(new CoordinateArgument(true, 0.0D), new CoordinateArgument(true, 0.0D),
+			new CoordinateArgument(true, 0.0D));
 	}
 
 	public int hashCode() {

@@ -25,16 +25,21 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class ClientBlockPosArgumentType implements ArgumentType<ClientPosArgument> {
-	private static final Collection<String> EXAMPLES = Arrays.asList("0 0 0", "~ ~ ~", "^ ^ ^", "^1 ^ ^-5", "~0.5 ~1 ~-5");
-	public static final SimpleCommandExceptionType UNLOADED_EXCEPTION = new SimpleCommandExceptionType(new TranslatableText("argument.pos.unloaded"));
-	public static final SimpleCommandExceptionType OUT_OF_WORLD_EXCEPTION = new SimpleCommandExceptionType(new TranslatableText("argument.pos.outofworld"));
-	public static final SimpleCommandExceptionType OUT_OF_BOUNDS_EXCEPTION = new SimpleCommandExceptionType(new TranslatableText("argument.pos.outofbounds"));
+	private static final Collection<String> EXAMPLES = Arrays.asList("0 0 0", "~ ~ ~", "^ ^ ^", "^1 ^ ^-5",
+		"~0.5 ~1 ~-5");
+	public static final SimpleCommandExceptionType UNLOADED_EXCEPTION = new SimpleCommandExceptionType(
+		new TranslatableText("argument.pos.unloaded"));
+	public static final SimpleCommandExceptionType OUT_OF_WORLD_EXCEPTION = new SimpleCommandExceptionType(
+		new TranslatableText("argument.pos.outofworld"));
+	public static final SimpleCommandExceptionType OUT_OF_BOUNDS_EXCEPTION = new SimpleCommandExceptionType(
+		new TranslatableText("argument.pos.outofbounds"));
 
 	public static ClientBlockPosArgumentType blockPos() {
 		return new ClientBlockPosArgumentType();
 	}
 
-	public static BlockPos getBlockPos(CommandContext<FabricClientCommandSource> c, String name) throws CommandSyntaxException {
+	public static BlockPos getBlockPos(CommandContext<FabricClientCommandSource> c, String name)
+		throws CommandSyntaxException {
 		BlockPos blockPos = c.getArgument(name, ClientPosArgument.class).toAbsoluteBlockPos(c.getSource());
 		if (!World.isValid(blockPos)) {
 			throw OUT_OF_BOUNDS_EXCEPTION.create();
@@ -44,7 +49,9 @@ public class ClientBlockPosArgumentType implements ArgumentType<ClientPosArgumen
 	}
 
 	public ClientPosArgument parse(StringReader stringReader) throws CommandSyntaxException {
-		return (ClientPosArgument)(stringReader.canRead() && stringReader.peek() == '^' ? ClientLookingPosArgument.parse(stringReader) : ClientDefaultPosArgument.parse(stringReader));
+		return (ClientPosArgument) (stringReader.canRead() && stringReader.peek() == '^'
+			? ClientLookingPosArgument.parse(stringReader)
+			: ClientDefaultPosArgument.parse(stringReader));
 	}
 
 	public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
@@ -56,10 +63,11 @@ public class ClientBlockPosArgumentType implements ArgumentType<ClientPosArgumen
 			if (!string.isEmpty() && string.charAt(0) == '^') {
 				collection = Collections.singleton(CommandSource.RelativePosition.ZERO_LOCAL);
 			} else {
-				collection = ((CommandSource)context.getSource()).getBlockPositionSuggestions();
+				collection = ((CommandSource) context.getSource()).getBlockPositionSuggestions();
 			}
 
-			return CommandSource.suggestPositions(string, (Collection<RelativePosition>) collection, builder, CommandManager.getCommandValidator(this::parse));
+			return CommandSource.suggestPositions(string, (Collection<RelativePosition>) collection, builder,
+				CommandManager.getCommandValidator(this::parse));
 		}
 	}
 

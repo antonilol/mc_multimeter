@@ -38,8 +38,8 @@ public class ClientLookingPosArgument implements ClientPosArgument {
 		float i = MathHelper.sin(-vec2f.x * 0.017453292F);
 		float j = MathHelper.cos((-vec2f.x + 90.0F) * 0.017453292F);
 		float k = MathHelper.sin((-vec2f.x + 90.0F) * 0.017453292F);
-		Vec3d vec3d2 = new Vec3d((double)(f * h), (double)i, (double)(g * h));
-		Vec3d vec3d3 = new Vec3d((double)(f * j), (double)k, (double)(g * j));
+		Vec3d vec3d2 = new Vec3d((double) (f * h), (double) i, (double) (g * h));
+		Vec3d vec3d3 = new Vec3d((double) (f * j), (double) k, (double) (g * j));
 		Vec3d vec3d4 = vec3d2.crossProduct(vec3d3).multiply(-1.0D);
 		double d = vec3d2.x * this.z + vec3d3.x * this.y + vec3d4.x * this.x;
 		double e = vec3d2.y * this.z + vec3d3.y * this.y + vec3d4.y * this.x;
@@ -101,12 +101,12 @@ public class ClientLookingPosArgument implements ClientPosArgument {
 		} else if (!(o instanceof ClientLookingPosArgument)) {
 			return false;
 		} else {
-			ClientLookingPosArgument lookingPosArgument = (ClientLookingPosArgument)o;
+			ClientLookingPosArgument lookingPosArgument = (ClientLookingPosArgument) o;
 			return this.x == lookingPosArgument.x && this.y == lookingPosArgument.y && this.z == lookingPosArgument.z;
 		}
 	}
 
 	public int hashCode() {
-		return Objects.hash(new Object[]{this.x, this.y, this.z});
+		return Objects.hash(new Object[] { this.x, this.y, this.z });
 	}
 }

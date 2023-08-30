@@ -31,13 +31,13 @@ import net.minecraft.network.MessageType;
 import net.minecraft.text.LiteralText;
 
 public class DebugMessageReceiver implements Runnable {
-	
+
 	private MinecraftClient client;
 
 	@Override
 	public void run() {
 		client = MinecraftClient.getInstance();
-		
+
 		while (true) {
 			String line;
 			try {
@@ -51,19 +51,18 @@ public class DebugMessageReceiver implements Runnable {
 				mcChat("DEBUG: stream EOF");
 				break;
 			}
-			
+
 			mcChat("DEBUG: " + line);
 		}
 	}
-	
+
 	private void mcChat(String msg) {
 		if (client.player != null && Main.DEBUG) {
 			client.inGameHud.addChatMessage(MessageType.SYSTEM, new LiteralText(msg), client.player.getUuid());
 		}
 	}
-	
+
 	public static void start() {
 		new Thread(new DebugMessageReceiver()).start();
 	}
 }
-
