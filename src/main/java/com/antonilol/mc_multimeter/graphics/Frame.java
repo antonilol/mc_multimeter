@@ -38,6 +38,7 @@ public class Frame extends JFrame implements Runnable {
 
 	public static void main(String[] args) {
 		if (args.length == 0) {
+			System.out.println("you are not supposed to run this directly");
 			return;
 		}
 		EventQueue.invokeLater(() -> {

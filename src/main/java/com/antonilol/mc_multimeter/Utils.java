@@ -23,6 +23,7 @@
 package com.antonilol.mc_multimeter;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -42,8 +43,8 @@ public class Utils implements Runnable {
 	public static final String REMOVE = "r";
 	public static final String REMOVEALL = "a";
 
-	private static final String thisJarFile;
-	private static final String javaExecutable;
+	private static final String startFrameCommand;
+	private static final File startFrameCd;
 
 	private static BufferedReader jFrameStderr = null;
 	public static PrintWriter jFrameStdin = null;
@@ -62,16 +63,25 @@ public class Utils implements Runnable {
 				StandardCharsets.UTF_8),
 			false);
 
+		String thisJarFile;
 		if (isWindows()) {
 			thisJarFile = jar_.substring(1).replace('/', '\\');
 		} else {
 			thisJarFile = jar_;
 		}
 
-		javaExecutable = Utils.escapeShellDoubleQuoteString(
+		String javaExecutable = Utils.escapeShellDoubleQuoteString(
 			System.getProperty("java.home") +
 				(Utils.isWindows() ? "\\bin\\java.exe" : "/bin/java"),
 			false);
+
+		if (thisJarFile.endsWith(".jar")) {
+			startFrameCommand = javaExecutable + " -jar " + thisJarFile + " arg";
+			startFrameCd = null;
+		} else {
+			startFrameCommand = javaExecutable + " com.antonilol.mc_multimeter.graphics.Frame arg";
+			startFrameCd = new File(thisJarFile);
+		}
 	}
 
 	private static String escape(String s, String escaper, List<String> targets) {
@@ -123,7 +133,7 @@ public class Utils implements Runnable {
 	}
 
 	public static Process startGraphics() throws IOException {
-		return Runtime.getRuntime().exec(javaExecutable + " -jar " + thisJarFile + " arg");
+		return Runtime.getRuntime().exec(startFrameCommand, null, startFrameCd);
 	}
 
 	@Override
